@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>封装getSiblings和addClass方法到window中</title>
+</head>
+
+<body>
+    <ul>
+        <li id="item1">选项1</li>
+        <li id="item2">选项2</li>
+        <li id="item3">选项3</li>
+        <li id="item4">选项4</li>
+        <li id="item5">选项5</li>
+    </ul>
+
+    <script>
+        window.jQuery = function (nodeOrSelector) {
+            let nodes = {}
+            if (typeof nodeOrSelector === 'string') {
+                let temp = document.querySelectorAll(nodeOrSelector)
+                for (let i = 0; i < temp.length; i++) {
+                    nodes[i] = temp[i]
+                }
+                nodes.length = temp.length
+            } else if (nodeOrSelector instanceof Node) {
+                nodes = { 0: nodeOrSelector, length: 1 }
+            }
+
+            nodes.getSiblings = function () {
+                var allChildren = node.parentNode.children
+                var arr = {
+                    length: 0
+                }
+                for (var i = 0; i < allChildren.length; i++) {
+                    if (allChildren[i] !== node) {
+                        arr[arr.length] = allChildren[i]
+                        arr.length++
+                    }
+                }
+                return arr
+            }
+            nodes.addClass = function (classes) {
+                for (let key in classes) {
+                    var value = classes[key]
+                    var methodName = value ? 'add' : 'remove'
+                    for (let i = 0; i < nodes.length; i++) {
+                        nodes[i].classList[methodName](key)
+                    }
+                }
+            }
+            //   nodes.getText = function () {
+            //     var texts = []
+            //     for (let i = 0; i < nodes.length; i ++) {
+            //       texts.push(nodes[i].textContent)
+            //     }
+            //     return texts
+            //   }
+            //   nodes.setText = function (text) {
+            //     for (let i = 0; i < nodes.length; i ++) {
+            //       nodes[i].textContent = text
+            //     }
+            //   }
+            nodes.text = function (text) {
+                if (text === undefined) {
+                    var texts = []
+                    for (let i = 0; i < nodes.length; i++) {
+                        texts.push(nodes[i].textContent)
+                    }
+                    return texts
+                } else {
+                    for (let i = 0; i < nodes.length; i++) {
+                        nodes[i].textContent = text
+                    }
+                }
+            }
+
+            return nodes
+
+        }
+
+        var node2 = jQuery('ul li')
+        console.log(node2)
+        node2.addClass({ 'a': true, 'b': false, 'c': true })
+        // console.log( node2.getText() )
+        // node2.setText('哈哈哈')
+        var text = node2.text('哈哈哈哈，呵呵呵呵')
+// console.log(text)
+    </script>
+</body>
+
+</html>
